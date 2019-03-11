@@ -1,0 +1,14 @@
+body{
+    background-image: url("../images/brickwall.png");
+}
+
+.jumbotron{
+    height: 555px;
+    background-image: url("../images/re1.jpg");
+    background-size: cover;
+}
+
+.save, .unsave{
+    float: right;
+}
+
