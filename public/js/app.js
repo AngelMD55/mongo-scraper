@@ -1,3 +1,4 @@
+//Scrape Articles from national association of realtors
 $("#scrape").on("click", function(req, res){
     $.ajax({
         method: "GET",
@@ -8,21 +9,25 @@ $("#scrape").on("click", function(req, res){
     })
 })
 
+//Display scrapes articles
 $.getJSON("/articles", function(data){
     for(let i= 0; i < data.length; i++){
-        $("#articles").append("<div class='card'><div class='card-header'><h3><a href=" + data[i].url + ">" + data[i].title +"</a><a class='btn btn-success save' data-id=" + data[i]._id + ">Save Article</a></h3><div class='card-body'>" + data[i].summary + "</div></div></div>")
+        $("#articles").append("<div class='card'><div class='card-header'><h3><a href=" + data[i].url + ">" + data[i].title +"</a><a class='btn btn-success save ml-1' data-id=" + data[i]._id + ">Save Article</a><a class='btn btn-info notes' data-idn=" + data[i]._id + ">Notes</a></h3><div class='card-body'>" + data[i].summary + "</div></div></div>")
         // <p data-id='" + data[i]._id+ "'>" +data[i].title + "<br />" + data[i].url + "</p>");
     }
 });
 
+//Display saved articles
 $.getJSON("/savedapi", function(data){
     for(let i= 0; i < data.length; i++){
-        $("#savedArticles").append("<div class='card'><div class='card-header'><h3><a href=" + data[i].url + ">" + data[i].title +"</a><a class='btn btn-success unsave' data-id=" + data[i]._id + ">Delete Article</a></h3><div class='card-body'>" + data[i].summary + "</div></div></div>") 
+        $("#savedArticles").append("<div class='card'><div class='card-header'><h3><a href=" + data[i].url + ">" + data[i].title +"</a><a class='btn btn-success unsave ml-1' data-id=" + data[i]._id + ">Delete Article</a><a class='btn btn-info notes' data-idn=" + data[i]._id + ">Notes</a></h3><div class='card-body'>" + data[i].summary + "</div></div></div>") 
         // <p data-id='" + data[i]._id+ "'>" +data[i].title + "<br />" + data[i].url + "</p>");
     }
 });
 
+//Onclick change saved to true
 $(document).on("click", ".save", function(){
+    
     let thisId = $(this).attr("data-id");
     console.log(thisId)
 
@@ -34,7 +39,9 @@ $(document).on("click", ".save", function(){
     });
 });
 
+//Onclick chanfe saved to false
 $(document).on("click", ".unsave", function(){
+   
     let thisId = $(this).attr("data-id");
     console.log(thisId)
 
@@ -47,22 +54,26 @@ $(document).on("click", ".unsave", function(){
     });
 });
 
-$(document).on("click", ".card", function(){
+// Onclick add classes to affect DOM
+$(document).on("click", ".notes", function(){
+    $(".articles1").addClass("col-8")
+    $(".notes1").addClass("col-4")
     $("#notes").empty();
 
-    let thisId = $(this).attr("data-id");
+    let thisId = $(this).attr("data-idn");
+    // console.log("thisId" + thisId)
 
+    // ajax call to get article by id
     $.ajax({
         method: "GET",
         url: "/articles/" + thisId
     })
     .then(function(data){
-        // console.log(data);
-
-        $("#notes").append("<h2>" +data.title + "</h2>");
-        $("#notes").append("<input id='titleInput' name='title'>");
-        $("#notes").append("<textarea id='bodyInput' name='body'></textarea");
-        $("#notes").append("<button data-id='" + data._id + "'id='saveNote'>Save Note</button>")
+        // create notes
+        $(".notes1").append("<h3 class='bg-primary text-center pb-2 mb-1'>" +data.title + "</h3>");
+        $(".notes1").append("<input id='titleInput' name='title' placeholder='Type Note Title'>");
+        $(".notes1").append("<textarea id='bodyInput' name='body' placeholder='Type Note'></textarea>");
+        $(".notes1").append("<button data-ids='" + data._id + "'id='saveNote' class='btn btn-success savebtn'>Save Note</button>")
 
         if (data.note){
             $("#titleInput").val(data.note.title);
@@ -71,8 +82,9 @@ $(document).on("click", ".card", function(){
     });
 });
 
-$(document).on("click", "#saveNote", function(){
-    let thisId = $(this).att("data-id");
+// on click to save articles and change DOM again
+$(document).on("click", ".savebtn", function(){
+    let thisId = $(this).attr("data-ids");
 
     $.ajax({
         method: "POST",
@@ -83,10 +95,16 @@ $(document).on("click", "#saveNote", function(){
         }
     })
     .then(function(data){
+        $(".articles1").removeClass("col-8")
+        $(".notes1").removeClass("col-4")
         console.log(data);
         $("#notes").empty();
     });
 
     $("#titleInput").val("");
     $("#bodyInput").val("");
+});
+
+$("#clear").on("click", function(){
+    $("#articles").empty();
 })

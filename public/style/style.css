@@ -8,7 +8,17 @@ body{
     background-size: cover;
 }
 
-.save, .unsave{
+.save, .unsave, .notes{
     float: right;
 }
 
+#titleInput{
+    margin-top: 5px;
+    width: 100%;
+}
+
+#bodyInput{
+    margin-top: 5px;
+    width: 100%;
+    height: 150px;
+}
